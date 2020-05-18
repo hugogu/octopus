@@ -1,0 +1,5 @@
+rootProject.name = 'octopus'
+include 'octopus-git'
+include 'octopus-kotlin'
+include 'octopus-model'
+include 'octopus-visual'
