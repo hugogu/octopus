@@ -8,8 +8,6 @@ import org.eclipse.jgit.diff.RawTextComparator
 import org.eclipse.jgit.treewalk.TreeWalk
 import org.eclipse.jgit.util.io.DisabledOutputStream
 import java.io.File
-import java.util.Date
-
 
 class GitFileActivityDetector {
     fun extractCommitStatistics(path: String) =
