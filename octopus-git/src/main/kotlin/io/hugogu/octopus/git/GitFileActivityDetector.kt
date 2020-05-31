@@ -20,22 +20,26 @@ class GitFileActivityDetector {
         formatter.setRepository(git.repository)
         formatter.setDiffComparator(RawTextComparator.DEFAULT)
         formatter.isDetectRenames = true
-        return commits.mapIndexed { index, commit ->
+        return commits
+            .filter { it.parents.count() == 1 }
+            .mapIndexed { index, commit ->
             val description = git.describe().setTarget(commit).call()
             val diffs = formatter.scan(commit.parents.firstOrNull(), commit.id)
             val addedMap = mutableMapOf<String, Int>()
             val deletedMap = mutableMapOf<String, Int>()
             diffs.forEach { diff ->
                 val fileHeader = formatter.toFileHeader(diff)
-                addedMap[fileHeader.newPath] = fileHeader.toEditList().sumBy { it.endB - it.beginB }
-                deletedMap[fileHeader.oldPath] = fileHeader.toEditList().sumBy { it.endA - it.beginA }
+                if (fileHeader.newPath.endsWith("kt") || fileHeader.oldPath.endsWith("kt")) {
+                    addedMap[fileHeader.newPath] = fileHeader.toEditList().sumBy { it.endB - it.beginB }
+                    deletedMap[fileHeader.oldPath] = fileHeader.toEditList().sumBy { it.endA - it.beginA }
+                }
             }
             treeWalk.reset(commit.tree)
             val fileChanges =
             (addedMap.keys + deletedMap.keys).map { file ->
                 FileChangeStatistics(file, addedMap.getOrDefault(file, 0), deletedMap.getOrDefault(file, 0))
             }
-            CommitStatistics(index, commit.committerIdent.`when`.toInstant(), commit.id.name, fileChanges)
+            CommitStatistics(index, commit.committerIdent.`when`.toInstant(), commit.id.name, commit.authorIdent.name, fileChanges)
         }
     }
 }

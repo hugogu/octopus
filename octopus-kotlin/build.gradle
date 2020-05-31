@@ -9,5 +9,6 @@ version '1.0-SNAPSHOT'
 dependencies {
     implementation project(':octopus-model')
     implementation("io.gitlab.arturbosch.detekt:detekt-api:${detekt_version}")
+    implementation("io.gitlab.arturbosch.detekt:detekt-core:${detekt_version}")
     implementation("io.gitlab.arturbosch.detekt:detekt-test:${detekt_version}")
 }

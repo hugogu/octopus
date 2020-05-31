@@ -20,6 +20,7 @@ object GitRepoContentUtils {
             AllFilesAtCommit(
                 it.id.name,
                 it.authorIdent.`when`.toInstant(),
+                it.authorIdent.name,
                 readElementsAt(git.repository, it.id.name, "", filter)
             )
         }

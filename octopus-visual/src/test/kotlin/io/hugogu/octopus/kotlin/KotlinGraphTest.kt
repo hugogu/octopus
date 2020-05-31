@@ -8,6 +8,7 @@ import io.hugogu.octopus.model.getTotalSystemImportPercent
 import io.hugogu.octopus.visual.demo.BrowserDemoUtil
 import org.junit.jupiter.api.Test
 import jetbrains.datalore.plot.PlotSvgExportPortable
+import jetbrains.letsPlot.geom.geom_bar
 import jetbrains.letsPlot.geom.geom_line
 import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.ggsize
@@ -24,18 +25,19 @@ class KotlinGraphTest {
         val data = mapOf<String, Any>(
             "X" to statistics.map { it.commitTime },
             "Added" to statistics.map { it.getTotalAdded() },
-            "Deleted" to statistics.map { -it.getTotalDeleted() }
+            "Deleted" to statistics.map { -it.getTotalDeleted() },
+            "Author" to statistics.map { it.author }
         )
         val p = ggplot(data) +
                 geom_line {
                     x = "X"
                     y = "Added"
-                    color = "Added"
+                    color = "Author"
                 } +
                 geom_line {
                     x = "X"
                     y = "Deleted"
-                    color = "Deleted"
+                    color = "Author"
                 } +
                 ggsize(1440, 900) +
                 ggtitle("Git Commit Statistics")
@@ -49,27 +51,21 @@ class KotlinGraphTest {
 
     @Test
     fun importTrendTest() {
-        val git = Git.open(File(".."))
+        val git = Git.open(File("/Users/hugogu-awx/Projects/airwallex-rails-dbs"))
         val history = GitRepoContentUtils.readFileHistory(git) { it.endsWith("kt") }
         val historyStats = history.map {
-            KotlinMeasurementFacade.extractImportUsage(it)
+            it to KotlinMeasurementFacade.extractImportUsage(it)
         }
         val data = mapOf<String, Any>(
             "X" to 0.until(historyStats.size).toList(),
-            "SysImportPercent" to historyStats.map { it.getTotalSystemImportPercent() },
-            "SysImportUseRate" to historyStats.map { it.getSystemImportUsedRate() },
-            "IfPercent" to historyStats.map { it.getIfPercent() }
+            "Author" to historyStats.map { it.first.author },
+            "SysImportPercent" to historyStats.map { it.second.getTotalSystemImportPercent() },
+            "SysImportUseRate" to historyStats.map { it.second.getSystemImportUsedRate() },
+            "IfPercent" to historyStats.map { it.second.getIfPercent() },
+            "IfTotal" to historyStats.map { it.second.sumBy { it.ifCount }}
         )
 
         val p = ggplot(data) +
-                geom_line {
-                    x = "X"
-                    y = "SysImportPercent"
-                }  +
-                geom_line {
-                    x = "X"
-                    y = "SysImportUseRate"
-                } +
                 geom_line {
                     x = "X"
                     y = "IfPercent"

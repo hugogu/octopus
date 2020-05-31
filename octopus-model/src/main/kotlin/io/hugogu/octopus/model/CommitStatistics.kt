@@ -6,6 +6,7 @@ data class CommitStatistics(
     val index: Int,
     val commitTime: Instant,
     val commitId: String,
+    val author: String,
     val fileChanges: Iterable<FileChangeStatistics>
 ) {
     fun getTotalAdded() = fileChanges.sumBy { it.added }
