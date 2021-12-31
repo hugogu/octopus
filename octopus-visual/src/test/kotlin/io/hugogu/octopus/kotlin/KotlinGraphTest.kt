@@ -12,8 +12,8 @@ import jetbrains.letsPlot.geom.geom_bar
 import jetbrains.letsPlot.geom.geom_line
 import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.ggsize
-import jetbrains.letsPlot.ggtitle
 import jetbrains.letsPlot.intern.toSpec
+import jetbrains.letsPlot.label.ggtitle
 import org.eclipse.jgit.api.Git
 import java.io.File
 
